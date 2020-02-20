@@ -46,7 +46,7 @@ def iou(box1, box2):
 
 def find_boundaries(table, word, fuzz_threshold):
     boundaries = table[table['text'].apply(lambda x: fuzz.ratio(x.lower(), word) >= fuzz_threshold)]['bounds'].values
-    return boundaries
+    return list(boundaries)
 
 
 def extract_page(table, page):
