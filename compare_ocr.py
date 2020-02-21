@@ -47,9 +47,9 @@ class OCR_Analyzer:
             im_data = self.images[page-1]
         except IndexError:
             print('Page does not exist.')
-        fig, ax = plot_page(im_data, page, self.image_scale)
-        ax.imshow(im_data, cmap='gray')
+        ax = plot_page(im_data, self.image_scale)
         plt.show()
+        return ax
 
 
     def show_boundary_boxes(self, page, word, table='both', fuzz_threshold=100):
@@ -68,11 +68,9 @@ class OCR_Analyzer:
             red_boxes = find_boundaries(page_data, word, fuzz_threshold)
             green_boxes = []
 
-        fig, ax = plot_page(im_data, page, self.image_scale)
+        ax = plot_page(im_data, self.image_scale)
 
-        ax.imshow(im_data, cmap='gray')
-
-        plot_boundary_boxes(ax, red_boxes, green_boxes)
+        ax = plot_boundary_boxes(ax, red_boxes, green_boxes)
 
         red_patch = patches.Patch(linewidth=2, edgecolor='r', facecolor='none', label=self.ocr_name_1.capitalize())
         info_1 = patches.Patch(edgecolor='none', facecolor='none', label=str(len(red_boxes)) + ' matches')
@@ -81,6 +79,8 @@ class OCR_Analyzer:
         plt.legend(handles=[red_patch, info_1, green_patch, info_2], loc='best', fancybox=True, framealpha=0.5)
 
         plt.show()
+
+        return ax
 
 
     def compare_ocr_outputs(self, iou_threshold=0.4, verbose=0):
