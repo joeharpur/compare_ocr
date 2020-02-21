@@ -29,8 +29,8 @@ class OCR_Analyzer:
 
 
     def scale_bounds(self, scale=1.0):
-        self.ocr_1['bounds'] = self.ocr_1['bounds'].apply(lambda l: [round(i*scale) for i in l])
-        self.ocr_2['bounds'] = self.ocr_2['bounds'].apply(lambda l: [round(i*scale) for i in l])
+        self.ocr_1['bounds'] = self.ocr_1['bounds'].apply(lambda l: [i*scale for i in l])
+        self.ocr_2['bounds'] = self.ocr_2['bounds'].apply(lambda l: [i*scale for i in l])
         if scale != 1.0:
             self.scale_trail.append(scale)
 
@@ -47,6 +47,7 @@ class OCR_Analyzer:
             im_data = self.images[page-1]
         except IndexError:
             print('Page does not exist.')
+            return 0
         ax = plot_page(im_data, self.image_scale)
         plt.show()
         return ax
@@ -57,33 +58,31 @@ class OCR_Analyzer:
             im_data = self.images[page-1]
         except IndexError:
             print('Page does not exist.')
-
+            return 0
+        tables = [self.ocr_1, self.ocr_2]
         if table == 'both':
-            page_data_1 = extract_page(self.ocr_1, page)
-            page_data_2 = extract_page(self.ocr_2, page)
+            page_data_1 = extract_page(tables[0], page)
+            page_data_2 = extract_page(tables[1], page)
             red_boxes = find_boundaries(page_data_1, word, fuzz_threshold)
             green_boxes = find_boundaries(page_data_2, word, fuzz_threshold)
         else:
+            table = tables[table-1]
             page_data = extract_page(table, page)
             red_boxes = find_boundaries(page_data, word, fuzz_threshold)
             green_boxes = []
 
+        red_count, green_count = len(red_boxes), len(green_boxes)
+
         ax = plot_page(im_data, self.image_scale)
-
         ax = plot_boundary_boxes(ax, red_boxes, green_boxes)
-
-        red_patch = patches.Patch(linewidth=2, edgecolor='r', facecolor='none', label=self.ocr_name_1.capitalize())
-        info_1 = patches.Patch(edgecolor='none', facecolor='none', label=str(len(red_boxes)) + ' matches')
-        green_patch = patches.Patch(linewidth=2, edgecolor='g', facecolor='none', label=self.ocr_name_2.capitalize())
-        info_2 = patches.Patch(edgecolor='none', facecolor='none', label=str(len(green_boxes)) + ' matches')
-        plt.legend(handles=[red_patch, info_1, green_patch, info_2], loc='best', fancybox=True, framealpha=0.5)
+        ax = build_legend(ax, self.ocr_name_1, self.ocr_name_2, red_count, green_count)
 
         plt.show()
 
         return ax
 
 
-    def compare_ocr_outputs(self, iou_threshold=0.4, verbose=0):
+    def compare_ocr_outputs(self, iou_threshold=0.4, verbose=0, indent=4):
 
         output = []
 
@@ -107,4 +106,4 @@ class OCR_Analyzer:
 
                     output.append(discrepency)
 
-        return json.dumps(output, indent=4, sort_keys=True)
+        return json.dumps(output, indent=indent, sort_keys=True)

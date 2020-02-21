@@ -92,3 +92,9 @@ def test_plot_boundary_boxes(test_im_data, test_boxes):
     total_boxes = len(green_boxes) + len(red_boxes)
     plotted_boxes = len(helpers.plot_boundary_boxes(test_ax, red_boxes, green_boxes).patches)
     assert  plotted_boxes == total_boxes
+
+
+def test_build_legend(test_im_data):
+    test_ax = helpers.plot_page(test_im_data, 100)
+    test_ax = helpers.build_legend(test_ax, 'test_1', 'test_2', 1, 2)
+    assert len(list(test_ax.get_legend().get_patches())) == 4
