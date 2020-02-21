@@ -45,7 +45,8 @@ def iou(box1, box2):
 
 
 def find_boundaries(table, word, fuzz_threshold):
-    boundaries = table[table['text'].apply(lambda x: fuzz.ratio(x.lower(), word) >= fuzz_threshold)]['bounds'].values
+    filter = lambda x: fuzz.ratio(x.lower(), word) >= fuzz_threshold
+    boundaries = table[table['text'].apply(filter)]['bounds'].values
     return list(boundaries)
 
 
@@ -54,13 +55,14 @@ def extract_page(table, page):
     return extracted
 
 
-def plot_page(im_data, page, scale):
-    height, width = im_data.shape
+def plot_page(im_data, scale):
+    height, width = im_data.shape[:2]
     figsize = height/scale, width/scale
     fig = plt.figure(figsize=figsize)
     ax = fig.add_axes([0, 0, 1, 1])
     ax.axis('off')
-    return fig, ax
+    ax.imshow(im_data, cmap='gray')
+    return ax
 
 
 def plot_boundary_boxes(ax, red_boxes, green_boxes):
@@ -80,3 +82,4 @@ def plot_boundary_boxes(ax, red_boxes, green_boxes):
                                        edgecolor='g',
                                        facecolor='none')
             ax.add_patch(g_rect)
+    return ax
