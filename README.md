@@ -6,11 +6,11 @@ Based on the boundary box outputs and text classification outputs of
 disagree. For further analysis, can plot boundary boxes of specific words
 over source images.
 
-Uses 'Intersection over Union' algorithm to calculate similarity between
+Uses [Intersection over Union](https://en.wikipedia.org/wiki/Jaccard_index) algorithm to calculate similarity between
 boundary boxes.
 
 Strictness of string matching for boundary box plotting is calculated using
-levenshtein distance between strings.
+[Levenshtein Distance](https://en.wikipedia.org/wiki/Levenshtein_distance) between strings.
 
 [![Build Status](https://travis-ci.org/joeharpur/compare_ocr.svg?branch=master)](https://travis-ci.org/joeharpur/compare_ocr)
 
