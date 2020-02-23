@@ -85,23 +85,28 @@ def plot_boundary_boxes(ax, red_boxes, green_boxes):
     return ax
 
 
-def build_legend(ax, test_name_1, test_name_2, red_count, green_count):
+def build_legend(ax, names, red_count, green_count):
+    handles = []
     red_patch = patches.Patch(linewidth=2,
                               edgecolor='r',
                               facecolor='none',
-                              label=test_name_1.capitalize())
-
+                              label=names[0].capitalize())
+    handles.append(red_patch)
     info_1 = patches.Patch(edgecolor='none',
                            facecolor='none',
                            label=str(red_count) + ' matches')
-    green_patch = patches.Patch(linewidth=2,
-                                edgecolor='g',
-                                facecolor='none',
-                                label=test_name_2.capitalize())
-    info_2 = patches.Patch(edgecolor='none',
-                           facecolor='none',
-                           label=str(green_count) + ' matches')
-    ax.legend(handles=[red_patch, info_1, green_patch, info_2],
+    handles.append(info_1)
+    if green_count > 0:
+        green_patch = patches.Patch(linewidth=2,
+                                    edgecolor='g',
+                                    facecolor='none',
+                                    label=names[1].capitalize())
+        handles.append(green_patch)
+        info_2 = patches.Patch(edgecolor='none',
+                               facecolor='none',
+                               label=str(green_count) + ' matches')
+        handles.append(info_2)
+    ax.legend(handles=handles,
               loc='best',
               framealpha=0.5)
     return ax

@@ -92,6 +92,7 @@ class OCR_Analyzer:
             table = tables[t_names.index(engine)]
             page_data = extract_page(table, page)
             red_boxes = find_boundaries(page_data, word, fuzz_threshold)
+            t_names = [engine]
             green_boxes = []
 
         red_count, green_count = len(red_boxes), len(green_boxes)
@@ -99,8 +100,7 @@ class OCR_Analyzer:
         ax = plot_page(im_data, self.image_scale)
         ax = plot_boundary_boxes(ax, red_boxes, green_boxes)
         ax = build_legend(ax,
-                          self.ocr_name_1,
-                          self.ocr_name_2,
+                          t_names,
                           red_count,
                           green_count)
 
