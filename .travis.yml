@@ -6,4 +6,4 @@ install:
 script:
   - coverage run -m pytest tests/
 after_success:
-  - coveralls
+  - coveralls --base_dir 'compare_ocr'
