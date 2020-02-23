@@ -1,18 +1,20 @@
+[![Build Status](https://travis-ci.org/joeharpur/compare_ocr.svg?branch=master)](https://travis-ci.org/joeharpur/compare_ocr)
+
 # compare_ocr
-Compare the JSON outputs of 2 different OCR engines.
+Compare the JSON outputs of 2 different [optical character recognition](https://en.wikipedia.org/wiki/Optical_character_recognition) engines.
 
 Based on the boundary box outputs and text classification outputs of
 2 OCR engines, outputs a JSON summary of the words on which the engines
 disagree. For further analysis, can plot boundary boxes of specific words
 over source images.
 
+Note. Source images must be .jpg format with images of multiple pages appearing in correct order in image directory.
+
 Uses [Intersection over Union](https://en.wikipedia.org/wiki/Jaccard_index) algorithm to calculate similarity between
 boundary boxes.
 
 Strictness of string matching for boundary box plotting is calculated using
 [Levenshtein Distance](https://en.wikipedia.org/wiki/Levenshtein_distance) between strings.
-
-[![Build Status](https://travis-ci.org/joeharpur/compare_ocr.svg?branch=master)](https://travis-ci.org/joeharpur/compare_ocr)
 
 ## Installation
 
@@ -63,18 +65,18 @@ ocr.compare_ocr_outputs(iou_threshold=t, verbose=v, indent=i)
 
 Run all tests
 ```python
-python -m pytest tests/
+coverage run -m pytest tests/
+```
+
+Show coverage report
+```python
+coverage report -m
 ```
 
 Skip tests requiring matplotlibs plt.show() (generates plot window)
 ```python
 python -m pytest tests/ -m "not show_plot"
 ```
-
-## Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
-Please make sure to update tests as appropriate.
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
