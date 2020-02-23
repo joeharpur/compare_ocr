@@ -38,7 +38,7 @@ def test_scale_bounds(ocr):
     row2 = random.randint(0, len(ocr.ocr_2_plot['bounds'].values)-1)
     item1, item2 = random.randint(0, 3), random.randint(0, 3)
     bounds_1a = ocr.ocr_1_plot['bounds'].values[row1][item1]
-    bounds_2a = ocr.ocr_1_plot['bounds'].values[row2][item2]
+    bounds_2a = ocr.ocr_2_plot['bounds'].values[row2][item2]
     ocr.scale_bounds(0.5)
     bounds_1b = ocr.ocr_1_plot['bounds'].values[row1][item1]
     bounds_2b = ocr.ocr_2_plot['bounds'].values[row2][item2]
@@ -67,6 +67,7 @@ def test_reverse_scaling(ocr):
     assert ocr.ocr_2_plot['bounds'].values[row2][item2] == ocr.ocr_2['bounds'].values[row2][item2]
 
 
+@pytest.mark.show_plot
 def test_show_page(ocr):
     ocr.load_images(ASSETS_DIR)
     assert len(ocr.show_page(1).images) == 1
@@ -75,6 +76,7 @@ def test_show_page(ocr):
         assert ocr.show_page(3)
 
 
+@pytest.mark.show_plot
 def test_show_boundary_boxes(ocr):
     ocr.load_images(ASSETS_DIR)
     test_ax_1 = ocr.show_boundary_boxes(1, 'sep')
