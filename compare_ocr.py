@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 Core class for compare_ocr.py
 """
@@ -16,6 +14,9 @@ import functools
 
 
 def catch_exception(f):
+    """
+    Decorator for exception handling.
+    """
     @functools.wraps(f)
     def func(*args, **kwargs):
         try:
@@ -27,6 +28,27 @@ def catch_exception(f):
 
 
 class OCR_Analyzer:
+    """
+    Compare the JSON outputs of 2 different OCR engines.
+
+    Based on the boundary box outputs and text classification outputs of
+    2 OCR engines, outputs a JSON summary of the words on which the engines
+    disagree. For further analysis, can plot boundary boxes of specific words
+    over source images.
+
+    Uses 'Intersection over Union' algorithm to calculate similarity between
+    boundary boxes.
+
+    Strictness of string matching for boundary box plotting is calculated using
+    levenshtein distance between strings.
+
+        
+    Arguments:
+    ocr_path_1 (String) -- path to JSON file 1
+    ocr_path_2 (String) -- path to JSON file 2
+    ocr_name_1 (String) -- name of ocr engine 1
+    ocr_path_2 (String) -- name of ocr engine 2
+    """
 
     @catch_exception
     def __init__(self, ocr_path_1, ocr_path_2, ocr_name_1, ocr_name_2):
@@ -44,6 +66,15 @@ class OCR_Analyzer:
 
     @catch_exception
     def load_images(self, directory):
+        """
+        Load source images.
+
+        Images must be in .jpg format.
+            
+        Arguments:
+        directory (String) -- path to image directory
+        """
+
         self.images = [plt.imread(image) for image in glob.glob(directory + '/*.jpg')]
         if len(self.images) == 0:
             raise IOError('No images found.')
@@ -51,6 +82,13 @@ class OCR_Analyzer:
 
     @catch_exception
     def scale_bounds(self, scale=1.0):
+        """
+        Scale boundary box values.
+            
+        Arguments:
+        scale (Float) -- value to scale boundary boxes by.
+        """
+
         if scale == 0:
             raise ValueError('Scale value can not be zero.')
         scale_func = lambda l: [round(i*scale) for i in l]
@@ -60,22 +98,53 @@ class OCR_Analyzer:
 
     @catch_exception
     def reverse_scaling(self):
+        """
+        Return boundary boxes to original values.
+        """
+
         self.ocr_1_plot['bounds'] = self.ocr_1['bounds']
         self.ocr_2_plot['bounds'] = self.ocr_2['bounds']
 
 
     @catch_exception
     def show_page(self, page):
+        """
+        Display source image.
+            
+        Arguments:
+        page (Int) -- page to show
+
+        Returns:
+        ax (matplotlib.axes) -- axes with image plotted
+        """
+
         if page > len(self.images):
             raise IndexError('Page does not exist.')
         im_data = self.images[page-1]
         ax = plot_page(im_data, self.image_scale)
         plt.show()
+
         return ax
 
 
     @catch_exception
     def show_boundary_boxes(self, page, word, engine='both', fuzz_threshold=100):
+        """
+        Show boundary boxes over source image.
+
+        Strictness of string matching for boundary box plotting is calculated using
+        levenshtein distance between strings.
+            
+        Arguments:
+        page (Int) -- page to show
+        word (String) -- word to show
+        engine (String) -- engine to use, default is 'both'
+        fuzz_treshold (Int) -- strictness of string matching. default is 100
+
+        Returns:
+        ax (matplotlib.axes) -- axes with image, boundary boxes, and legend plotted
+        """
+
         if page > len(self.images):
             raise IndexError('Page does not exist.')
         im_data = self.images[page-1]
@@ -111,6 +180,20 @@ class OCR_Analyzer:
 
     @catch_exception
     def compare_ocr_outputs(self, iou_threshold=0.4, verbose=0, indent=4):
+        """
+        Compare the outputs of both OCR engines.
+
+        Uses 'Intersection over Union' algorithm to calculate similarity between
+        boundary boxes.
+            
+        Arguments:
+        iou_threshold (Float) -- threshold for overlapping boxes, default is 0.4
+        verbose (Int) -- level of verbosity in output, default is 0
+        indent (Int) -- level of indentation in JSON output
+
+        Returns:
+        (JSON) -- JSON object showing comparison between both OCR engines.
+        """
 
         if verbose not in [0, 1]:
             raise ValueError('Verbose level must be 0 or 1.')
