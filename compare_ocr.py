@@ -139,3 +139,7 @@ class OCR_Analyzer:
                     output.append(discrepency)
 
         return json.dumps(output, indent=indent, sort_keys=True)
+
+
+if __name__ == '__main__':
+    pass
